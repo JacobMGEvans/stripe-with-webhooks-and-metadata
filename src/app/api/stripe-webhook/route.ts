@@ -1,0 +1,55 @@
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2023-10-16",
+});
+
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+export async function POST(req: NextRequest) {
+  if (req === null) return;
+  const stripeSignature = req.headers.get("stripe-signature");
+  const json = await req.json();
+  const buffer = Buffer.from(JSON.stringify(json));
+
+  if (stripeSignature === null) return;
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      buffer.toString(),
+      stripeSignature,
+      webhookSecret
+    );
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 400,
+        }
+      );
+  }
+
+  if (event === undefined) return;
+
+  switch (event.type) {
+    case "checkout.session.completed":
+      const session = event.data.object;
+      console.log(`Payment successful for session ID: ${session.id}`);
+      break;
+    default:
+      console.warn(`Unhandled event type: ${event.type}`);
+  }
+
+  NextResponse.json({ status: 200, message: "success" });
+}

@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
-  title: "Next.js 13 with Clerk",
+  title: "Stripe with Webhooks & Metadata",
 };
 
 export default function RootLayout({

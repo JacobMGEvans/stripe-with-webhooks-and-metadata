@@ -1,3 +1,4 @@
+import { auth, clerkClient } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -14,7 +15,9 @@ export const config = {
 };
 
 export async function POST(req: NextRequest) {
-  if (req === null) return;
+  const { userId } = auth();
+  if (userId === null || req === null) return;
+
   const stripeSignature = req.headers.get("stripe-signature");
   const json = await req.json();
   const buffer = Buffer.from(JSON.stringify(json));
@@ -46,6 +49,15 @@ export async function POST(req: NextRequest) {
     case "checkout.session.completed":
       const session = event.data.object;
       console.log(`Payment successful for session ID: ${session.id}`);
+      clerkClient.users.updateUserMetadata(userId, {
+        publicMetadata: {
+          stripe: {
+            status: session.status,
+            payment: session.payment_status,
+          },
+        },
+      });
+
       break;
     default:
       console.warn(`Unhandled event type: ${event.type}`);

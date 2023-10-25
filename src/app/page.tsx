@@ -1,6 +1,7 @@
 "use client";
 
-import { SignIn, useAuth } from "@clerk/nextjs";
+import { SignIn, UserButton, useAuth } from "@clerk/nextjs";
+import CheckoutButton from "../components/stripe-payment";
 
 async function stripeWebhook() {
   await fetch("/api/stripe-webhook");
@@ -23,15 +24,29 @@ export default function Home() {
           <SignIn redirectUrl="/" />
         </div>
       ) : (
-        <div
-          style={{
-            marginTop: "1rem",
-            width: "100%",
-            textAlign: "center",
-          }}
-        >
-          You are signed in!
-        </div>
+        <>
+          <header className="flex justify-end p-5 pr-10">
+            <UserButton />
+          </header>
+          <div
+            style={{
+              marginTop: "1rem",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            You are signed in!
+          </div>
+          <div
+            style={{
+              marginTop: "1rem",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+            <CheckoutButton />
+          </div>
+        </>
       )}
     </main>
   );

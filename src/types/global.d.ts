@@ -1,11 +1,13 @@
+import type Stripe from "stripe";
+
 export {};
 
 declare global {
   interface CustomJwtSessionClaims {
-    "public-metadata": {
+    publicMetadata: {
       stripe: {
-        status: string | null;
-        payment: string;
+        status: Stripe.Checkout.Session.Status;
+        payment: Stripe.Checkout.Session.PaymentStatus;
       };
     };
   }

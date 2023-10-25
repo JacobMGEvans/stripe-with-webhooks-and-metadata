@@ -14,15 +14,15 @@ export default authMiddleware({
     if (
       auth.userId &&
       req.nextUrl.pathname === "/members" &&
-      auth.sessionClaims["public-metadata"].stripe.status !== "paid"
+      auth.sessionClaims.publicMetadata.stripe?.payment !== "paid"
     ) {
-      return NextResponse.redirect("/");
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     if (
       auth.userId &&
       req.nextUrl.pathname === "/members" &&
-      auth.sessionClaims["public-metadata"].stripe.status === "paid"
+      auth.sessionClaims.publicMetadata.stripe?.payment === "paid"
     ) {
       return NextResponse.next();
     }

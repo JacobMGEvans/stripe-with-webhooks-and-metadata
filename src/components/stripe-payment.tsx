@@ -1,11 +1,8 @@
 import { loadStripe } from "@stripe/stripe-js";
-import Image from "next/image";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 );
-
-// async function stripeWebhook() {}
 
 export default function CheckoutButton() {
   const handleCheckout = async () => {
@@ -28,13 +25,13 @@ export default function CheckoutButton() {
         })
       ).json();
 
-      await stripe
-        .redirectToCheckout({
-          sessionId: session.id,
-        })
-        .then(async () => {
-          await fetch("/api/stripe-webhook");
-        });
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+      if (!error) {
+        console.log("Webhook Firing!");
+        await fetch("/api/stripe-webhook");
+      }
     } catch (error) {
       console.error(error);
     }

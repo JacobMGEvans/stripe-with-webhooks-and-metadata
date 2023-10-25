@@ -15,14 +15,16 @@ export const config = {
 };
 
 export async function POST(req: NextRequest) {
+  debugger;
   const { userId } = auth();
-  if (userId === null || req === null) return;
+  if (userId === null || req === null)
+    throw new Error(`Missing userId or request`, { cause: { userId, req } });
 
   const stripeSignature = req.headers.get("stripe-signature");
   const json = await req.json();
   const buffer = Buffer.from(JSON.stringify(json));
 
-  if (stripeSignature === null) return;
+  if (stripeSignature === null) throw new Error("stripeSignature is null");
 
   let event;
   try {
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
       );
   }
 
-  if (event === undefined) return;
+  if (event === undefined) throw new Error(`event is undefined`);
 
   switch (event.type) {
     case "checkout.session.completed":

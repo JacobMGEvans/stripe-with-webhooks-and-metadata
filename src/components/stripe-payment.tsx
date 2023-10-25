@@ -5,6 +5,8 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 );
 
+// async function stripeWebhook() {}
+
 export default function CheckoutButton() {
   const handleCheckout = async () => {
     try {
@@ -13,7 +15,7 @@ export default function CheckoutButton() {
         return;
       }
 
-      const { sessionId } = await (
+      const { session } = await (
         await fetch("/api/stripe-payment", {
           method: "POST",
           headers: {
@@ -21,14 +23,18 @@ export default function CheckoutButton() {
           },
           body: JSON.stringify({
             quantity: 1,
-            unit_amount: 10,
+            unit_amount: 100, // $1.00
           }),
         })
       ).json();
-      debugger;
-      await stripe.redirectToCheckout({
-        sessionId,
-      });
+
+      await stripe
+        .redirectToCheckout({
+          sessionId: session.id,
+        })
+        .then(async () => {
+          await fetch("/api/stripe-webhook");
+        });
     } catch (error) {
       console.error(error);
     }
@@ -40,8 +46,7 @@ export default function CheckoutButton() {
         onClick={handleCheckout}
         className="flex bg-indigo-600 hover:bg-indigo-800 text-white font-semibold py-2 px-4 rounded"
       >
-        <Image src="/Clerk-Image.png" alt="Clerk Logo" width={20} height={20} />
-        <span className="ml-2">Purchase Membership</span>
+        <span className="ml-2">$1 Membership</span>
       </button>
     </section>
   );

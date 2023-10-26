@@ -1,11 +1,10 @@
-import { auth, clerkClient } from "@clerk/nextjs";
+import { clerkClient } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2023-10-16",
 });
-
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 export const config = {
@@ -15,21 +14,17 @@ export const config = {
 };
 
 export async function POST(req: NextRequest) {
-  debugger;
-  const { userId } = auth();
-  if (userId === null || req === null)
-    throw new Error(`Missing userId or request`, { cause: { userId, req } });
+  if (req === null)
+    throw new Error(`Missing userId or request`, { cause: { req } });
 
   const stripeSignature = req.headers.get("stripe-signature");
-  const json = await req.json();
-  const buffer = Buffer.from(JSON.stringify(json));
 
   if (stripeSignature === null) throw new Error("stripeSignature is null");
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-      buffer.toString(),
+      await req.text(),
       stripeSignature,
       webhookSecret
     );
@@ -46,19 +41,21 @@ export async function POST(req: NextRequest) {
   }
 
   if (event === undefined) throw new Error(`event is undefined`);
-
   switch (event.type) {
     case "checkout.session.completed":
       const session = event.data.object;
       console.log(`Payment successful for session ID: ${session.id}`);
-      clerkClient.users.updateUserMetadata(userId, {
-        publicMetadata: {
-          stripe: {
-            status: session.status,
-            payment: session.payment_status,
+      clerkClient.users.updateUserMetadata(
+        event.data.object.metadata?.userId as string,
+        {
+          publicMetadata: {
+            stripe: {
+              status: session.status,
+              payment: session.payment_status,
+            },
           },
-        },
-      });
+        }
+      );
 
       break;
     default:

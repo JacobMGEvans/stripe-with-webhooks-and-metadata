@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -6,6 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 export async function POST(req: NextRequest) {
+  const { userId } = auth();
   const { unit_amount, quantity } = await req.json();
 
   try {
@@ -23,6 +25,9 @@ export async function POST(req: NextRequest) {
           quantity,
         },
       ],
+      metadata: {
+        userId,
+      },
       mode: "payment",
       success_url: `${req.headers.get("origin")}/members`,
       cancel_url: `${req.headers.get("origin")}/`,
@@ -31,6 +36,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ session }, { status: 200 });
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ error }, { status: 500 });
+      throw new Error(
+        `Error creating Stripe checkout session: ${error.message}`,
+        { cause: error }
+      );
   }
 }

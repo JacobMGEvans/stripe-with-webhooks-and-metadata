@@ -25,13 +25,9 @@ export default function CheckoutButton() {
         })
       ).json();
 
-      const { error } = await stripe.redirectToCheckout({
+      await stripe.redirectToCheckout({
         sessionId: session.id,
       });
-      if (!error) {
-        console.log("Webhook Firing!");
-        await fetch("/api/stripe-webhook");
-      }
     } catch (error) {
       console.error(error);
     }

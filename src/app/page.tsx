@@ -20,12 +20,12 @@ export default function Home() {
           <SignIn redirectUrl="/" />
         </div>
       ) : (
-        <div className="bg-slate-800 h-screen">
-          <div className="flex justify-center">You are signed in!</div>
+        <div>
+          <div className="flex justify-center pt-12">You are signed in!</div>
           <div className="grid justify-center mt-4 w-full col-auto gap-2">
             <CheckoutButton />
             <a
-              className="bg-indigo-600 hover:bg-indigo-800 text-white font-semibold py-1 rounded"
+              className="bg-indigo-600 hover:bg-indigo-800 text-white font-semibold py-2 px-2 rounded"
               href="/members"
             >
               Go to members page

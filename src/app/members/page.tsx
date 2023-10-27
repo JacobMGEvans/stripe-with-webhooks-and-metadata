@@ -2,9 +2,15 @@ import Image from "next/image";
 
 export default function MemberPage() {
   return (
-    <span className="flex justify-center pt-32">
-      You are a member!
-      <Image src="/Clerk-Image.png" alt="Clerk Logo" width={25} height={25} />
-    </span>
+    <div className="grid col-auto place-content-center bg-slate-800 h-screen">
+      <p>You are a member!</p>
+      <Image
+        src="/Clerk-Image.png"
+        alt="Clerk Logo"
+        width={60}
+        height={60}
+        className="place-self-center"
+      />
+    </div>
   );
 }

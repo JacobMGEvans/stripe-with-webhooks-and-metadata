@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, UserButton } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Stripe with Webhooks & Metadata",
@@ -15,7 +15,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>{children}</body>
+        <body>
+          <header className="flex justify-end p-5 pr-10">
+            <UserButton />
+          </header>
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );

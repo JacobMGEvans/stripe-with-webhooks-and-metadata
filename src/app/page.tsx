@@ -1,6 +1,6 @@
 "use client";
 
-import { SignIn, UserButton, useAuth } from "@clerk/nextjs";
+import { SignIn, useAuth } from "@clerk/nextjs";
 import CheckoutButton from "../components/stripe-payment";
 
 export default function Home() {
@@ -20,10 +20,7 @@ export default function Home() {
           <SignIn redirectUrl="/" />
         </div>
       ) : (
-        <>
-          <header className="flex justify-end p-5 pr-10">
-            <UserButton />
-          </header>
+        <div className="bg-slate-800 h-screen">
           <div className="flex justify-center">You are signed in!</div>
           <div className="grid justify-center mt-4 w-full col-auto gap-2">
             <CheckoutButton />
@@ -34,7 +31,7 @@ export default function Home() {
               Go to members page
             </a>
           </div>
-        </>
+        </div>
       )}
     </main>
   );

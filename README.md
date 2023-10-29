@@ -2,7 +2,14 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies and cp sample.env.local to .env.local and add your API keys from [Clerk auth dashboard](https://dashboard.clerk.com/)
+
+```bash
+cp sample.env.local .env.local
+npm install
+```
+
+Second, run the development server:
 
 ```bash
 npm run dev

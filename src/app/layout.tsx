@@ -16,7 +16,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className="bg-slate-800 h-screen">
-          <header className="flex justify-end p-5 pr-10">
+          <header className="flex justify-end p-5 pr-10 h-20">
             <UserButton />
           </header>
           {children}

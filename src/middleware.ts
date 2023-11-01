@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 // Please edit this to allow other routes to be public as needed.
 // See https://clerk.com/docs/references/nextjs/auth-middleware for more information about configuring your Middleware
 export default authMiddleware({
-  publicRoutes: ["/", "/api/(.*)"],
+  publicRoutes: ["/api/(.*)"],
   afterAuth: async (auth, req) => {
     if (!auth.userId && !auth.isPublicRoute) {
       return redirectToSignIn({ returnBackUrl: req.url });
@@ -14,7 +14,7 @@ export default authMiddleware({
     if (
       auth.userId &&
       req.nextUrl.pathname === "/members" &&
-      auth.sessionClaims.publicMetadata.stripe?.payment !== "paid"
+      auth.sessionClaims.publicMetadata?.stripe?.payment !== "paid"
     ) {
       return NextResponse.redirect(new URL("/", req.url));
     }
@@ -22,7 +22,7 @@ export default authMiddleware({
     if (
       auth.userId &&
       req.nextUrl.pathname === "/members" &&
-      auth.sessionClaims.publicMetadata.stripe?.payment === "paid"
+      auth.sessionClaims.publicMetadata?.stripe?.payment === "paid"
     ) {
       return NextResponse.next();
     }

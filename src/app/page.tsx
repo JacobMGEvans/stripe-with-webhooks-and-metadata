@@ -1,14 +1,12 @@
-"use client";
-
-import { SignIn, useAuth } from "@clerk/nextjs";
+import { SignIn, auth } from "@clerk/nextjs";
 import CheckoutButton from "../components/stripe-payment";
 
 export default function Home() {
-  const { isSignedIn } = useAuth();
+  const { userId } = auth()
 
   return (
     <main>
-      {!isSignedIn ? (
+      {!userId ? (
         <div
           style={{
             marginTop: "1rem",
